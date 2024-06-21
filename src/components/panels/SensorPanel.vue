@@ -4,214 +4,66 @@
     :title="$t('Panels.SensorPanel.Headline')"
     :collapsible="true"
     card-class="sensor-panel">
-    <div v-if="isDataAvailable">
       <v-card class="py-2">
-        <div v-if="sensorData">
-          <div class="table-container">
-            <h2 class="sensor-title" v-html="sensorData.title"></h2>
-            <table class="sensor-table">
-              <thead>
-                <tr>
-                  <th v-for="header in sensorData.headers" :key="header">{{ header }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(row, rowIndex) in sensorData.rows" :key="rowIndex">
-                  <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="sensor-footer" v-html="sensorData.footer"></div>
+        <div v-for="(group, index) in groupedSensors" :key="index" class="table-container">
+          <table class="sensor-table">
+            <thead>
+              <tr>
+                <th>Sensor</th>
+                <th v-for="key in group.keys" :key="key">{{ key }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="sensor in group.sensors" :key="sensor.name">
+                <td>{{ sensor.friendly_name }}</td>
+                <td v-for="key in group.keys" :key="key">{{ sensor.values[key] ?? 'N/A' }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div ref="chart" class="chart"></div>
-        <div v-else>
-          <p>No Sensor Data Found...</p>
-        </div>
+        <template >
+          <v-divider class="my-0" />
+          <sensor-chart />
+        </template>
       </v-card>
-    </div>
   </panel>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
+import Component from 'vue-class-component'
+import { Mixins } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
 import Panel from '@/components/ui/Panel.vue'
-import { mapState, mapActions } from 'vuex'
+import Responsive from '@/components/ui/Responsive.vue'
+import ControlMixin from '@/components/mixins/control'
 import { mdiDipSwitch } from '@mdi/js'
-import * as echarts from 'echarts/core'
-import { LineChart } from 'echarts/charts'
-import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components'
-import { CanvasRenderer } from 'echarts/renderers'
-import type { ECharts } from 'echarts/core'
-import type { ECBasicOption } from 'echarts/types/dist/shared.d'
-
-echarts.use([TitleComponent, TooltipComponent, GridComponent, LineChart, CanvasRenderer])
+import SensorChart from '@/components/charts/SensorChart.vue'
 
 @Component({
-  components: { Panel },
-  computed: {
-    ...mapState({
-      sensorData: (state: any) => state.sensorData ?? null
-    }),
-    isDataAvailable() {
-      return this.sensorData !== null
-    }
-  },
-  methods: {
-    ...mapActions(['fetchSensorData'])
-  }
+  components: { Panel, SensorChart, Responsive,},
+ 
 })
 export default class SensorPanel extends Mixins(BaseMixin) {
   mdiDipSwitch = mdiDipSwitch
-  sensorData: SensorData | null = null
-  interval: number | undefined = undefined
-  chart: ECharts | null = null
+  historicalData: { [key: string]: { timestamp: number, value: number }[] } = {}
 
-  created() {
-    this.fetchSensorData()
-    this.interval = window.setInterval(this.fetchSensorData, 500)
+  get moonrakerSensors() {
+    return this.$store.state.server.sensor.sensors
   }
 
-  mounted() {
-    this.initializeChart()
-  }
+  get groupedSensors() {
+    const sensorGroups: { [key: string]: { keys: string[], sensors: any[] } } = {}
 
-  updated() {
-    this.initializeChart()
-  }
-
-  beforeDestroy() {
-    if (this.interval) {
-      clearInterval(this.interval)
-    }
-    if (this.chart) {
-      this.chart.dispose()
-    }
-  }
-
-  initializeChart() {
-    if (this.isDataAvailable && this.$refs.chart) {
-      if (!this.chart) {
-        this.chart = echarts.init(this.$refs.chart as HTMLElement)
-        this.chart.setOption(this.chartOptions)
+    Object.keys(this.moonrakerSensors).forEach((sensorName) => {
+      const sensor = this.moonrakerSensors[sensorName]
+      const values = sensor.values ?? {}
+      const valueKeys = Object.keys(values).sort().join(',')
+      if (!sensorGroups[valueKeys]) {
+        sensorGroups[valueKeys] = { keys: Object.keys(values), sensors: [] }
       }
-    }
-  }
-
-  async fetchSensorData() {
-    try {
-      const url = `http://${window.location.hostname}:5000/sensor`
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-
-      if (response.ok) {
-        const data: SensorData = await response.json()
-        this.sensorData = data
-        this.updateChart(data.chart_data)
-      } else {
-        console.error('Error fetching sensor data:', response.statusText)
-        this.sensorData = null
-      }
-    } catch (error) {
-      console.error('Error fetching sensor data:', error)
-      this.sensorData = null
-    }
-  }
-
-  updateChart(sensorValue: number) {
-    if (this.chart) {
-      const timestamp = new Date()
-      const options = this.chart.getOption()
-
-      options.xAxis[0].data.push(timestamp)
-      options.series[0].data.push([timestamp, sensorValue])
-
-      if (options.xAxis[0].data.length > 1500) {
-        options.xAxis[0].data.shift()
-        options.series[0].data.shift()
-      }
-
-      this.chart.setOption(options)
-    }
-  }
-
-  get chartOptions(): ECBasicOption {
-    return {
-      renderer: 'svg',
-      animation: false,
-      grid: {
-        top: 35,
-        right: 20,
-        bottom: 40,
-        left: 70
-      },
-      tooltip: {
-        trigger: 'axis',
-        formatter: (params: any[]) => {
-          return params.map(param => param.marker + ' ' + param.seriesName + ': ' + param.data[1]).join('<br/>')
-        }
-      },
-      xAxis: {
-        type: 'time',
-        splitNumber: 5,
-        minInterval: 120 * 1000,
-        splitLine: {
-          show: true,
-          lineStyle: {
-            color: '#fff',
-            opacity: '0.1'
-          }
-        },
-        axisLabel: {
-          color: '#ccc',
-          formatter: (value: number) => {
-            const date = new Date(value)
-            return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0')
-          }
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#ccc'
-          }
-        },
-        data: []
-      },
-      yAxis: {
-        type: 'value',
-        boundaryGap: [0, '10%'],
-        scale: true,
-        splitLine: {
-          show: true,
-          lineStyle: {
-            color: '#fff',
-            opacity: '0.1'
-          }
-        },
-        axisLabel: {
-          color: '#ccc'
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#ccc'
-          }
-        }
-      },
-      series: [
-        {
-          name: 'Sensor Value',
-          type: 'line',
-          data: []
-        }
-      ]
-    }
-  }
-  get isDataAvailable() {
-    return this.sensorData !== null
+      sensorGroups[valueKeys].sensors.push({ name: sensorName, ...sensor })
+    })
+    return Object.values(sensorGroups)
   }
 }
 </script>
@@ -235,7 +87,6 @@ td {
   padding: 10px;
   text-align: center;
   color: #ccc;
-  font-size: 0.875rem;
 }
 th {
   border-top: none;
@@ -243,7 +94,6 @@ th {
   padding: 10px;
   text-align: center;
   color: #ccc;
-  font-size: 0.75rem;
 }
 .sensor-footer {
   text-align: center;
@@ -267,6 +117,12 @@ th {
   .chart {
     height: 300px;
   }
+  td {
+    font-size: 0.875rem;
+  }
+  th{
+    font-size: 0.75rem;
+  }
 }
 @media (max-width: 480px) {
   .sensor-table th,
@@ -278,6 +134,12 @@ th {
   }
   .chart {
     height: 200px;
+  }
+  td {
+    font-size: 1.0rem!important;
+  }
+  th {
+    font-size: 0.875rem!important;
   }
 }
 </style>

@@ -2,6 +2,8 @@ import { ServerPowerState } from '@/store/server/power/types'
 import { ServerUpdateManagerState } from '@/store/server/updateManager/types'
 import { ServerHistoryState } from '@/store/server/history/types'
 import { ServerTimelapseState } from '@/store/server/timelapse/types'
+import { ServerSensorHistoryState } from '@/store/server/sensorHistory/types'
+import { ServerSensorState } from '@/store/server/sensor/types'
 
 export interface ServerState {
     klippy_connected: boolean
@@ -62,6 +64,8 @@ export interface ServerState {
     updateManager?: ServerUpdateManagerState
     history?: ServerHistoryState
     timelapse?: ServerTimelapseState
+    sensorHistory?: ServerSensorHistoryState
+    sensor?: ServerSensorState
 }
 
 export interface ServerStateEvent {

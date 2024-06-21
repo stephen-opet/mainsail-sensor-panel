@@ -12,6 +12,7 @@ export const actions: ActionTree<ServerState, RootState> = {
         dispatch('stopKlippyStateInterval')
 
         commit('reset')
+        commit('sensorHistory/reset')
         dispatch('power/reset')
         dispatch('updateManager/reset')
     },
@@ -24,9 +25,11 @@ export const actions: ActionTree<ServerState, RootState> = {
         dispatch('socket/addInitModule', 'server/systemInfo', { root: true })
         dispatch('socket/addInitModule', 'server/procStats', { root: true })
         dispatch('socket/addInitModule', 'server/databaseList', { root: true })
+        dispatch('socket/addInitModule', 'server/initSensorHistory', { root: true })
 
         dispatch('identify')
         Vue.$socket.emit('server.info', {}, { action: 'server/initServerInfo' })
+        Vue.$socket.emit('server.sensors.measurements',{},{ action: 'printer/sensorHistory/init' })
         Vue.$socket.emit('server.config', {}, { action: 'server/initServerConfig' })
         Vue.$socket.emit('machine.system_info', {}, { action: 'server/initSystemInfo' })
         Vue.$socket.emit('machine.proc_stats', {}, { action: 'server/initProcStats' })
@@ -71,6 +74,7 @@ export const actions: ActionTree<ServerState, RootState> = {
         commit('saveDbNamespaces', payload.namespaces)
 
         Vue.$socket.emit('server.info', {}, { action: 'server/checkKlippyConnected' })
+        Vue.$socket.emit('server.sensors.measurements',{},{ action: 'server/sensorHistory/init' })
         dispatch('socket/removeInitModule', 'server/databaseList', { root: true })
     },
 
