@@ -39,11 +39,6 @@
                 :name="sensor.name"
                 :enabled="sensor.enabled"
                 :filament_detected="sensor.filament_detected" />
-        </div>
-        <div v-for="(sensor, index) of moonrakerSensors" :key="'moonraker_sensor_' + index">
-            <v-divider v-if="index || miscellaneous.length || lights.length || filamentSensors.length" />
-            <moonraker-sensor :name="sensor" />
-        </div>
     </panel>
 </template>
 
@@ -53,11 +48,10 @@ import BaseMixin from '@/components/mixins/base'
 import MiscellaneousSlider from '@/components/inputs/MiscellaneousSlider.vue'
 import MiscellaneousLight from '@/components/inputs/MiscellaneousLight.vue'
 import FilamentSensor from '@/components/inputs/FilamentSensor.vue'
-import MoonrakerSensor from '@/components/panels/Miscellaneous/MoonrakerSensor.vue'
 import Panel from '@/components/ui/Panel.vue'
 import { mdiDipSwitch } from '@mdi/js'
 @Component({
-    components: { Panel, FilamentSensor, MiscellaneousSlider, MiscellaneousLight, MoonrakerSensor },
+    components: { Panel, FilamentSensor, MiscellaneousSlider, MiscellaneousLight },
 })
 export default class MiscellaneousPanel extends Mixins(BaseMixin) {
     mdiDipSwitch = mdiDipSwitch
@@ -72,10 +66,6 @@ export default class MiscellaneousPanel extends Mixins(BaseMixin) {
 
     get lights() {
         return this.$store.getters['printer/getLights'] ?? []
-    }
-
-    get moonrakerSensors() {
-        return this.$store.getters['server/sensor/getSensors'] ?? []
     }
 
     get showMiscellaneousPanel() {
