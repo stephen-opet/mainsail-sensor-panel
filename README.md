@@ -16,8 +16,8 @@ Amongst <a src="https://github.com/nevermore3d/StealthMax">certain circles</a> i
 On a personal level, this project is the core reason I migrated from RepRap to Klipper 1y+ ago. I live in a small, poorly-ventilated space and have always been weary of air quality issues related to FDM printing. Klipper's incorporation of the Raspberry Pi lends itself incredibly well towards adding custom sensors, such as the SPG40 I use to monitor my chamber's air quality. 
 
 ## Screenshots
-![settings](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/f636775e-a334-4151-a3c8-523cfc9ae415)
 ![panel](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/f7afa67d-25de-47f5-8040-62b46a9890b1)
+![settings](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/f636775e-a334-4151-a3c8-523cfc9ae415)
 ![ChartSelection](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/33771302-a5ba-4945-873d-2af7d021c476)
 
 
