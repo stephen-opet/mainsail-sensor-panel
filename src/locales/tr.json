@@ -619,6 +619,10 @@
             "On": "Aç",
             "PowerControl": "Güç Kontrolü"
         },
+        "SensorPanel" : {
+            "Headline": "Sensör Verileri",
+            "ShowNameInChart": "Grafikte sensörü göster"
+        },
         "StatusPanel": {
             "CancelPrint": "Baskıyı İptal Et",
             "ClearPrintStats": "Baskı İstatistiklerini Temizle",

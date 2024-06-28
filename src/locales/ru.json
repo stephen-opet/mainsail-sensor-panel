@@ -652,6 +652,10 @@
             "On": "Вкл.",
             "PowerControl": "Управление питанием"
         },
+        "SensorPanel" : {
+            "Headline": "Данные датчика",
+            "ShowNameInChart": "Показать датчик на графике"
+        },
         "SpoolmanPanel": {
             "Cancel": "Отмена",
             "ChangeSpool": "Сменить катушку",

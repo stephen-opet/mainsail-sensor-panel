@@ -687,6 +687,10 @@
             "On": "An",
             "PowerControl": "Stromversorgung"
         },
+        "SensorPanel" : {
+            "Headline": "Sensordaten",
+            "ShowNameInChart": "Sensor im Diagramm anzeigen"
+        },
         "SpoolmanPanel": {
             "Cancel": "Abbrechen",
             "ChangeSpool": "Rolle wechseln",

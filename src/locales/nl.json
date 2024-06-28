@@ -580,6 +580,10 @@
             "On": "Aan",
             "PowerControl": "Power Control"
         },
+        "SensorPanel" : {
+            "Headline": "Sensorgegevens",
+            "ShowNameInChart": "Sensor in grafiek weergeven"
+        },
         "StatusPanel": {
             "CancelPrint": "Annuleer print",
             "ClearPrintStats": "Wis print statistieken",

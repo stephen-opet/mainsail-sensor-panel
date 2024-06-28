@@ -580,6 +580,10 @@
             "On": "Zapnuto",
             "PowerControl": "Řízení napájení"
         },
+        "SensorPanel" : {
+            "Headline": "Data senzoru",
+            "ShowNameInChart": "Zobrazit senzor v grafu"
+        },
         "StatusPanel": {
             "CancelPrint": "Zrušit tisk",
             "ClearPrintStats": "Vymazat statistiky tisku",

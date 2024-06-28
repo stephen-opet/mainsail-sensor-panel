@@ -620,6 +620,10 @@
             "On": "Wł.",
             "PowerControl": "Kontrola zasilania"
         },
+        "SensorPanel" : {
+            "Headline": "Dane czujnika",
+            "ShowNameInChart": "Pokaż czujnik na wykresie"
+        },
         "SpoolmanPanel": {
             "Cancel": "Anuluj",
             "ChangeSpool": "Zmień szpulę",

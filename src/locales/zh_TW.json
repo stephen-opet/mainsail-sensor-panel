@@ -559,6 +559,10 @@
             "On": "開",
             "PowerControl": "電源管理"
         },
+        "SensorPanel" : {
+            "Headline": "傳感器數據",
+            "ShowNameInChart": "在圖表中顯示傳感器"
+        },
         "StatusPanel": {
             "CancelPrint": "取消列印",
             "ClearPrintStats": "清除列印統計數據",

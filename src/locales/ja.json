@@ -580,6 +580,10 @@
             "On": "オン",
             "PowerControl": "電源コントロール"
         },
+        "SensorPanel" : {
+            "Headline": "センサーデータ",
+            "ShowNameInChart": "グラフにセンサーを表示"
+        },
         "StatusPanel": {
             "CancelPrint": "印刷取り消し",
             "ClearPrintStats": "印刷状態の表示クリア",

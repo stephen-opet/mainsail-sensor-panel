@@ -630,6 +630,10 @@
             "On": "Acceso",
             "PowerControl": "Controllo Alimentazione"
         },
+        "SensorPanel" : {
+            "Headline": "Dati del sensore",
+            "ShowNameInChart": "Mostra sensore nel grafico"
+        },
         "SpoolmanPanel": {
             "Cancel": "Cancella",
             "ChangeSpool": "Cambia Bobina",

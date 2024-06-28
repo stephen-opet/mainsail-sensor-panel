@@ -523,6 +523,10 @@
             "On": "BE",
             "PowerControl": "Tápellátás vezérlés"
         },
+        "SensorPanel" : {
+            "Headline": "Érzékelő adatai",
+            "ShowNameInChart": "Érzékelő megjelenítése a grafikonon"
+        },
         "StatusPanel": {
             "CancelPrint": "Nyomtatás megszakítása",
             "ClearPrintStats": "Nyomt. statisztikák törlése",

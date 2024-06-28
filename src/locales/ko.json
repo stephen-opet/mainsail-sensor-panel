@@ -581,6 +581,10 @@
             "On": "켜기",
             "PowerControl": "전원 제어"
         },
+        "SensorPanel" : {
+            "Headline": "센서 데이터",
+            "ShowNameInChart": "차트에 센서 표시"
+        },    
         "StatusPanel": {
             "CancelPrint": "취소",
             "ClearPrintStats": "통계 초기화",

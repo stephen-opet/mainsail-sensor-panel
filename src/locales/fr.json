@@ -624,6 +624,10 @@
             "On": "Marche",
             "PowerControl": "Alimentation"
         },
+        "SensorPanel" : {
+            "Headline": "Données du capteur",
+            "ShowNameInChart": "Afficher le capteur dans le graphique"
+        },
         "SpoolmanPanel": {
             "Cancel": "Annuler",
             "ChangeSpool": "Changer de bobine",

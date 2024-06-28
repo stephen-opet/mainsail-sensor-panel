@@ -629,6 +629,10 @@
             "On": "Tænd",
             "PowerControl": "Strømstyring"
         },
+        "SensorPanel" : {
+            "Headline": "Sensordata",
+            "ShowNameInChart": "Vis sensor i diagram"
+        },
         "SpoolmanPanel": {
             "Cancel": "Annuller",
             "ChangeSpool": "Skift spool",

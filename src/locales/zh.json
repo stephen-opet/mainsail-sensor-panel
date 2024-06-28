@@ -687,6 +687,10 @@
             "On": "打开",
             "PowerControl": "电源控制"
         },
+        "SensorPanel" : {
+            "Headline": "传感器数据",
+            "ShowNameInChart": "在图表中显示传感器"
+        },
         "SpoolmanPanel": {
             "Cancel": "取消",
             "ChangeSpool": "更换料盘",

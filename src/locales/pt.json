@@ -587,6 +587,10 @@
             "On": "On",
             "PowerControl": "Controle de Energia"
         },
+        "SensorPanel" : {
+            "Headline": "Dados do sensor",
+            "ShowNameInChart": "Mostrar sensor no gráfico"
+        },
         "StatusPanel": {
             "CancelPrint": "Cancelar Impressão",
             "ClearPrintStats": "Limpar estatísticas de impressão",

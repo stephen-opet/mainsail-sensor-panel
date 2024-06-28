@@ -630,6 +630,10 @@
             "On": "På",
             "PowerControl": "Strömstyrning"
         },
+        "SensorPanel" : {
+            "Headline": "Sensordata",
+            "ShowNameInChart": "Visa sensor i diagrammet"
+        },
         "SpoolmanPanel": {
             "Cancel": "Avbryt",
             "ChangeSpool": "Byt spole",
