@@ -1,5 +1,138 @@
 <p align="center">
   <a>
+    <img src="https://ddamakertech.com/wp-content/uploads/2022/12/cropped-ddalogo.png" alt='Mainsail logo' height="152">
+    <h1 align="center">Mainsail w/ Sensor Panel</h1>
+    <h2 align="center"><a src="https://ddamakertech.com">By DDA Maker Tech</a>
+  </a>
+</p>
+<p align="center">
+  A modified Mainsail UI that adds moonraker sensor data & graph panel to the dashboard page.
+</p>
+
+## Purpose
+
+Amongst <a src="https://github.com/nevermore3d/StealthMax">certain circles</a> in the 3D printing community, custom sensor measurments are increasingly becoming a core component of our 3D printing hardware. Moonraker has added support for importing custom sensor data, and the Mailsail Devs have begun to incorporate support for displaying this data. This project follows this same direction - we import custom data published to Moonraker, add it to the data store, and display it on the dashboard. It is in many ways a blatant rip-off of the temperature panel (why reinvent the wheel? temperature panel works very well)
+
+On a personal level, this project is the core reason I migrated from RepRap to Klipper 1y+ ago. I live in a small, poorly-ventilated space and have always been weary of air quality issues related to FDM printing. Klipper's incorporation of the Raspberry Pi lends itself incredibly well towards adding custom sensors, such as the SPG40 I use to monitor my chamber's air quality. 
+
+## Screenshots
+![settings](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/f636775e-a334-4151-a3c8-523cfc9ae415)
+![panel](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/f7afa67d-25de-47f5-8040-62b46a9890b1)
+![ChartSelection](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/33771302-a5ba-4945-873d-2af7d021c476)
+
+
+## Step 0 - Post your custom sensor data to MQTT, and import it into Moonraker
+
+I will not cover this in great detail here - the specific steps users must follow to read their sensor and publish the data is unique to your specific setup. I will, however, provide these resources for you:
+- **[Sensett](https://github.com/stephen-opet/sensett):** KIAUH-esque CLI module I developed to automate sensor measurements & manage MQTT as a background service. This is my recommended first-stop if you need help getting started
+- **[Moonraker Docs](https://moonraker.readthedocs.io/en/latest/configuration/#sensor)):** Detailed documentation on configuring Moonraker to read MQTT data
+
+
+## Step 1 - Install this forked Mainsail install
+
+You have a few options to install this forked repo:
+
+### A) Install Latest Release
+
+ - Navigate to <a src="https://github.com/stephen-opet/mainsail-sensor-panel/releases">Releases</a> and download the latest release (mainsail.zip).
+ - Extract .zip file contents
+ - On your printer, remove the @/mainsail directory entirely; replace it with the unzipped contents
+ - Restart NGINX (sudo systemctl restart nginx) or otherwise just reboot your printer
+ - Refresh your browser window
+
+### B) Build your own install
+ - Download the file contents of this repo
+ - Within the downloaded directory, build it with node:
+  ```
+  npm install
+  npm run build
+  ```
+ - Within the working directory, locate dist/mainsail.zip
+ - Extract .zip file contents
+ - On your printer, remove the @/mainsail directory entirely; replace it with the unzipped contents
+ - Restart NGINX (sudo systemctl restart nginx) or otherwise just reboot your printer
+ - Refresh your browser window
+
+## Step 2 - Stay Updated
+
+If you plan to run this forked Mainsail on your machine long-term, updating mainsail unfortunately becomes a lot more difficult - KIAUH will not work, and Moonraker update manager will want you to reinstall vanilla Mainsail. You will have to decide if you are smart, or lazy
+
+### A) If you are smart:
+Smart users will trust only themselves with maintaining software updates. They accept a greater burden of maintenance work to ensure up-to-date software
+ - Fork this repo to your personal Github account
+ - Periodically sync your forked repo with upstream commits - this will include updates from both mainsail-crew & the sensor-panel mod
+ - Periodically reinstall mainsail on your printer
+
+### B) If you are lazy:
+Lazy users will blindly trust me, an internet stranger, to maintain their software alongside the official Mainsail repo. I MAKE NO PROMISES TO MAINTAIN THIS REPO IN A TIMELY OR CONSISTENT MANNER
+ 
+ - Manually install the repo once time, according to Step 1
+ - On your printer, navigate to Moonraker.conf and modify the [update_manager mainsail] snippet to use this repo for software updates:
+  ```
+  [update_manager mainsail]
+  type: web
+  channel: stable
+  repo: stephen-opet/mainsail-sensor-panel
+  path: ~/mainsail
+  ```
+ - The Update Manager will now manage updates for Mainsail if/when I release updates alongside mainsail-crew
+
+## Additional Notes
+The panel exists on the dashboard page, as I monitor my sensor readings very closely when operating my printer. However, it may be moved into the Maintenance page in the future - while I am able to run both the temperature & sensor eCharts on the same page without a noticable spike in resource consumption, it's not beyond the realm of possibility that some machines may exhibit difficulty rendering both graphs simultaneously. For now, and users that do struggle to render both can disable the graph through the 'settings' button on the sensor panel. 
+
+I am a hardware guy. Javascript dev is well outside my comfort zone. This project works reasonably well, but I have no doubt a skilled JS developer can make improvements. Do not hesitate to suggest changes 
+
+For anyone dev-minded who wants some insight into the modifications I have made, I will list out all files that have been added/changed:
+
+New Files Added:
+
+- Vue components for panel on dashboard:
+    - /src/components/charts/SensorChart.vue
+    - /src/components/panels/SensorPanelListItem.vue
+    - /src/components/panels/SensorPanelListItemEdit.vue
+    - /src/components/panels/SensorPanelListItemEditChartSerie.vue
+    - /src/components/panels/SensorPanelSettings.vue
+    - /src/components/panels/SensorPanel.vue
+
+ - Functions to add sensor history to the data store & manage it - mirrors printer/tempHistory:
+    - /src/store/server/sensorHistory/actions.ts
+    - /src/store/server/sensorHistory/getters.ts
+    - /src/store/server/sensorHistory/index.ts
+    - /src/store/server/sensorHistory/mutations.ts
+    - /src/store/server/sensorHistory/types.ts
+
+Deleted files: components that add sensor data to misc panel - now a redundant function
+
+ - /src/components/panels/Miscellaneous/MoonrakerSensor.vue
+ - /src/components/panels/Miscellaneous/MoonrakerSensorValue.vue
+
+Modified Files:
+
+ - full contents of /src/locales, added localization data for Panels.SensorPanel
+ - Files modified to add sensor panel to dashboard:
+    - /src/components/mixins/dashboard.ts
+    - /src/pages/Dashboard.vue
+    - /src/store/variables.ts
+ - /src/components/panels/MiscellaneousPanel.vue modified to remove moonraker sensors from Misc panel
+ - Modified (new, unreleased) moonraker sensor functions to add sensor parameter_info & history_fields to data store
+    - sensor/src/store/server/sensor/actions.ts
+    - sensor/src/store/server/sensor/types.ts
+ - /src/plugins/build-release_info.ts - repo details modified to support moonraker update center using this repo
+ - Added sensorHistory to server object
+    - /src/store/server/types.ts
+    - /src/store/server/index.ts
+    - /src/store/server/actions.ts
+ - Added sensorChart features to store/gui to support user modifying chart settings over GUI:
+    - /src/store/gui/actions.ts
+    - /src/store/gui/getters.ts
+    - /src/store/gui/index.ts
+    - /src/store/gui/mutations.ts
+    - /src/store/gui/types.ts
+
+_______________________________________________________________
+
+<p align="center">
+  <a>
     <img src="https://raw.githubusercontent.com/mainsail-crew/docs/master/assets/img/logo.png" alt='Mainsail logo' height="152">
     <h1 align="center">Mainsail</h1>
   </a>
