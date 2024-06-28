@@ -650,9 +650,6 @@
                 "Velocity": "Velocity"
             }
         },
-        "SensorPanel" : {
-            "Headline": "Sensor Data"
-        },
         "MacrosPanel": {
             "Headline": "Macros",
             "Send": "send"
@@ -689,6 +686,10 @@
             "Off": "Off",
             "On": "On",
             "PowerControl": "Power Control"
+        },
+        "SensorPanel" : {
+            "Headline": "Sensor Data",
+            "ShowNameInChart": "Show sensor in chart"
         },
         "SpoolmanPanel": {
             "Cancel": "Cancel",

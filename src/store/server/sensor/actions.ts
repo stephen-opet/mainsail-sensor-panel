@@ -9,7 +9,7 @@ export const actions: ActionTree<ServerSensorState, RootState> = {
     },
 
     init() {
-        Vue.$socket.emit('server.sensors.list', {}, { action: 'server/sensor/getSensors' })
+        Vue.$socket.emit('server.sensors.list', {extended: true}, { action: 'server/sensor/getSensors' })
     },
 
     getSensors({ commit, dispatch }, payload) {

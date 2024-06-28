@@ -256,6 +256,10 @@ export const getDefaultState = (): GuiState => {
                 countPerPage: 10,
             },
             lockedSliders: [],
+            sensorchart: {
+                datasetSettings: {},
+                boolSensorchart: true,
+            },
             tempchart: {
                 boolTempchart: true,
                 hiddenDataset: [],

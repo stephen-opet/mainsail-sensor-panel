@@ -176,6 +176,10 @@ export interface GuiState {
             countPerPage: number
         }
         lockedSliders: string[]
+        sensorchart: {
+            datasetSettings: any
+            boolSensorchart: boolean
+        }
         tempchart: {
             boolTempchart: boolean
             hiddenDataset: string[]

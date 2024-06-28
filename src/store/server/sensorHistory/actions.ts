@@ -1,12 +1,5 @@
 import Vue from 'vue'
-import {
-    colorArray,
-    colorChamber,
-    colorHeaterBed,
-    datasetInterval,
-    datasetTypes,
-    datasetTypesInPercents,
-} from '@/store/variables'
+import { datasetInterval } from '@/store/variables'
 import { ActionTree } from 'vuex'
 import {
     ServerSensorHistoryState,
@@ -28,13 +21,15 @@ export const actions: ActionTree<ServerSensorHistoryState, RootState> = {
 
         const now = new Date()
         const allSensors = rootGetters['server/sensor/getSensors'] ?? [] 
+
+        if(allSensors.length === 0) return
+
         const maxHistory = rootGetters['server/sensorHistory/getSensorStoreSize']
 
         if (payload !== undefined) {
             if ('requestParams' in payload) delete payload.requestParams
 
             const objectKeys = Object.keys(payload)
-            // [ chamber,ambient]
 
             // eslint-disable-next-line
             const importData: any = {}
@@ -64,9 +59,7 @@ export const actions: ActionTree<ServerSensorHistoryState, RootState> = {
 
                 const prettyName = key.charAt(0).toUpperCase() + key.slice(1)
                 importData[prettyName] = { ...datasetValues }
-                // importData = {chamber: {"AQ": [],...}, ambient: {"AQ": [],...} }
             })
-
 
             const tempDataset = []
             for (let i = 0; i < maxHistory; i++) {
@@ -123,7 +116,6 @@ export const actions: ActionTree<ServerSensorHistoryState, RootState> = {
 
                 // add main serie to series
                 series.push(serie)
-
             })
 
             commit('setInitSeries', series)
@@ -152,10 +144,6 @@ export const actions: ActionTree<ServerSensorHistoryState, RootState> = {
     },
 
     async updateSource({ commit, rootState, rootGetters, state }) {
-        /*if (state.timeLastUpdate !== null) {
-            const t0 = performance.now()
-            window.console.debug('update Source', t0-state.timeLastUpdate)
-        }*/
 
         const items = rootGetters['server/sensor/getSensors'] ?? []   
 
@@ -191,8 +179,6 @@ export const actions: ActionTree<ServerSensorHistoryState, RootState> = {
                 maxHistory: rootGetters['server/sensorHistory/getSensorStoreSize'],
             })
         }
-
-        //commit('saveLastDate', performance.now())
     },
 
     setColor({ commit }, payload) {

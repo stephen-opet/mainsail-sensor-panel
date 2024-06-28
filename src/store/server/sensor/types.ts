@@ -11,4 +11,7 @@ export interface ServerSensorStateSensor {
     values: {
         [key: string]: number
     }
+    parameter_info: {
+        [key: string]: string
+    }
 }

@@ -15,6 +15,16 @@ export const getters: GetterTree<GuiState, any> = {
         return ['temperature', 'target'].includes(payload.type)
     },
 
+    getSensorDatasetValue: (state) => (payload: { name: string; type: string }) => {
+        if (
+            payload.name in state.view.sensorchart.datasetSettings &&
+            payload.type in state.view.sensorchart.datasetSettings[payload.name]
+        )
+            return state.view.sensorchart.datasetSettings[payload.name][payload.type]
+
+        return ['temperature', 'target'].includes(payload.type)
+    },
+
     getDatasetAdditionalSensorValue: (state) => (payload: { name: string; sensor: string }) => {
         if (
             payload.name in state.view.tempchart.datasetSettings &&

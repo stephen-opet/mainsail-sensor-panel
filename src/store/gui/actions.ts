@@ -475,6 +475,18 @@ export const actions: ActionTree<GuiState, RootState> = {
         })
     },
 
+    setSensorChartDatasetStatus(
+        { commit, dispatch, state },
+        payload: { objectName: string; dataset: string; value: boolean }
+    ) {
+        commit('setSensorChartDatasetStatus', payload)
+
+        dispatch('updateSettings', {
+            keyName: 'view.sensorchart.datasetSettings',
+            newVal: state.view.sensorchart.datasetSettings,
+        })
+    },
+
     setDatasetAdditionalSensorStatus(
         { commit, dispatch, state },
         payload: { objectName: string; dataset: string; value: boolean }

@@ -1,9 +1,13 @@
 <template>
   <panel
-    :icon="mdiDipSwitch"
+    v-if="hasSensors"
+    :icon="mdiSatelliteVariant"
     :title="$t('Panels.SensorPanel.Headline')"
     :collapsible="true"
     card-class="sensor-panel">
+      <template #buttons>
+            <sensor-panel-settings />
+        </template>
       <v-card class="py-2">
         <div v-for="(group, index) in groupedSensors" :key="index" class="table-container">
           <table class="sensor-table">
@@ -16,14 +20,25 @@
             <tbody>
               <tr v-for="sensor in group.sensors" :key="sensor.name">
                 <td>{{ sensor.friendly_name }}</td>
-                <td v-for="key in group.keys" :key="key">{{ sensor.values[key] ?? 'N/A' }}</td>
+                <td v-for="key in group.keys" :key="key">
+                  <span class="cursor-pointer" @click="showEditDialog(sensor.name, key)">
+                    {{ getSensorValueWithUnit(sensor, key) ?? 'N/A' }}
+                  </span>
+                  <component
+                    :is="sensorPanelListItemEdit"
+                    :key="`${capitalize(sensor.name)}: ${key}`"
+                    :object-name="`${capitalize(sensor.name)}: ${key}`"
+                    :name="`${capitalize(sensor.name)}: ${key}`"
+                    :bool-show="isEditDialogVisible(sensor.name, key)"
+                    @close-dialog="closeEditDialog(sensor.name, key)" />
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <template >
+        <template v-if="boolSensorchart">
           <v-divider class="my-0" />
-          <sensor-chart />
+          <component :is="sensorChart" />
         </template>
       </v-card>
   </panel>
@@ -36,19 +51,46 @@ import BaseMixin from '@/components/mixins/base'
 import Panel from '@/components/ui/Panel.vue'
 import Responsive from '@/components/ui/Responsive.vue'
 import ControlMixin from '@/components/mixins/control'
-import { mdiDipSwitch } from '@mdi/js'
-import SensorChart from '@/components/charts/SensorChart.vue'
+import { mdiSatelliteVariant } from '@mdi/js'
+import { capitalize } from '@/plugins/helpers'
 
 @Component({
-  components: { Panel, SensorChart, Responsive,},
- 
+  components: { 
+    Panel, 
+    Responsive, 
+  },
 })
 export default class SensorPanel extends Mixins(BaseMixin) {
-  mdiDipSwitch = mdiDipSwitch
+  mdiSatelliteVariant = mdiSatelliteVariant
   historicalData: { [key: string]: { timestamp: number, value: number }[] } = {}
+  editDialogs: { [key: string]: string | null } = {}
+
+  get sensorChart() {
+    return () => import('@/components/charts/SensorChart.vue');
+  }
+
+  get sensorPanelListItemEdit() {
+    return () => import('@/components/panels/Sensor/SensorPanelListItemEdit.vue');
+  }
+
+  showEditDialog(sensorName: string, key: string) {
+    this.$set(this.editDialogs, `${sensorName}:${key}`, true)
+  }
+
+  closeEditDialog(sensorName: string, key: string) {
+    this.$set(this.editDialogs, `${sensorName}:${key}`, null)
+  }
+
+  isEditDialogVisible(sensorName: string, key: string) {
+    return this.editDialogs[`${sensorName}:${key}`] === true
+  }
 
   get moonrakerSensors() {
-    return this.$store.state.server.sensor.sensors
+    return this.$store.state.server.sensor.sensors ?? []
+  }
+
+  get hasSensors(): boolean {
+    return Object.keys(this.moonrakerSensors).length > 0
   }
 
   get groupedSensors() {
@@ -64,6 +106,24 @@ export default class SensorPanel extends Mixins(BaseMixin) {
       sensorGroups[valueKeys].sensors.push({ name: sensorName, ...sensor })
     })
     return Object.values(sensorGroups)
+  }
+  
+  capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+  }
+
+  get boolSensorchart(): boolean {
+    return this.$store.state.gui.view.sensorchart.boolSensorchart ?? false
+  }
+
+  getSensorValueWithUnit(sensor, key) {
+    const value = sensor.values[key]
+    for(const param of sensor.parameter_info){
+      if(capitalize(param.name) == capitalize(key)){
+        return `${value}${param.units}`
+      }
+    }
+    return value
   }
 }
 </script>
@@ -120,7 +180,7 @@ th {
   td {
     font-size: 0.875rem;
   }
-  th{
+  th {
     font-size: 0.75rem;
   }
 }

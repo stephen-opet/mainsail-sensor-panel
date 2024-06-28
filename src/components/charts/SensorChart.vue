@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts">
+import { mapActions } from 'vuex'
 import { convertName } from '@/plugins/helpers'
 import Component from 'vue-class-component'
 import { Mixins, Watch } from 'vue-property-decorator'
@@ -30,6 +31,9 @@ interface echartsTooltipObj {
 
 @Component({
     components: {},
+    methods: {
+        ...mapActions('server/sensorHistory', ['setSelectedLegends'])
+    }
 })
 export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
     declare $refs: {
@@ -45,21 +49,9 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
             animation: false,
             tooltip: this.tooltip,
             legend: {
-                show: true,
-                type: 'plain',
-                orient: 'horizontal',
-                bottom: 0,
-                data: this.series.map(s => s.name),
+                animation: false,
+                show: false,
                 selected: this.selectedLegends,
-                textStyle: {
-                    color: '#ccc'
-                },
-                itemGap: 10,
-                padding: 10,
-                lineStyle: {
-                    color: 'inherit',
-                },
-                icon: 'rect'
             },
             xAxis: {
                 type: 'time',
@@ -113,7 +105,7 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
         return [
             {
                 type: 'value',
-                boundaryGap: [0, '10%'],
+                boundaryGap: ['10%', '10%'],
                 scale: true,
                 splitLine: {
                     show: true,
@@ -143,9 +135,9 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
                 option: {
                     grid: {
                         top: 35,
-                        right: this.optionGridRight,
+                        right: 15,
                         left: 60,
-                        bottom: this.dynamicGridBottomWide,
+                        bottom: 50,
                     },
                     xAxis: {
                         minInterval: 60 * 1000,
@@ -166,7 +158,7 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
                     grid: {
                         top: 35,
                         right: 20,
-                        bottom: this.dynamicGridBottomMobile,
+                        bottom: 50,
                         left: 50
                     },
                     xAxis: {
@@ -200,7 +192,7 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
     }
 
     get selectedLegends() {
-        return this.$store.state.server.sensorHistory.selectedLegends ?? {}
+        return this.$store.getters['server/sensorHistory/getSelectedLegends']
     }
 
     get timeFormat() {
@@ -208,32 +200,13 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
     }
 
     get sensorchartHeight() {
-        return 250 + this.dynamicLegendHeight
+        return this.$store.state.gui.uiSettings.sensorchartHeight ?? 250
     }
 
     get sensorchartStyle() {
         return {
             height: this.sensorchartHeight + 'px',
         }
-    }
-
-    get optionGridRight() {
-        return 15
-    }
-
-    get dynamicGridBottomWide() {
-        return this.dynamicLegendHeight + 50
-    }
-
-    get dynamicGridBottomMobile() {
-        return this.dynamicLegendHeight + 65
-    }
-
-    get dynamicLegendHeight() {
-        const legendItems = this.series.length
-        const itemsPerRow = 3 
-        const rows = Math.ceil(legendItems / itemsPerRow)
-        return rows * 20 
     }
 
     beforeDestroy() {
@@ -273,6 +246,10 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
 
     @Watch('selectedLegends')
     selectedLegendsChanged(newVal: any, oldVal: any) {
+        if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
+            return
+        }
+        this.setSelectedLegends(newVal)
         if (this.chart?.isDisposed() !== true) {
             Object.keys(newVal).forEach((key) => {
                 if (newVal[key] !== oldVal[key]) {

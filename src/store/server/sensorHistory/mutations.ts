@@ -40,20 +40,11 @@ export const mutations: MutationTree<ServerSensorHistoryState> = {
     setColor(state, payload) {
         state.series
             .filter((serie: ServerSensorHistoryStateSerie) => {
-                return payload.name === serie.name || serie.name.startsWith(payload.name + '-')
-            })
+                return payload.name === serie.name })
             .forEach((serie: ServerSensorHistoryStateSerie) => {
                 serie.color = payload.value
                 serie.lineStyle.color = payload.value
                 serie.emphasis.lineStyle.color = payload.value
-
-                if (serie.name.endsWith('-target')) {
-                    const areaStyle = serie.areaStyle
-                    if (areaStyle) areaStyle.color = payload.value
-
-                    const areaStyle2 = serie.emphasis?.areaStyle
-                    if (areaStyle2) areaStyle2.color = payload.value
-                }
             })
     },
 }

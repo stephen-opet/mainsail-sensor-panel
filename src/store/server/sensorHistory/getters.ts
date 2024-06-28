@@ -5,6 +5,7 @@ import {
     ServerSensorHistoryStateSourceEntry,
 } from '@/store/server/sensorHistory/types'
 import { RootState } from '@/store/types'
+import { capitalize } from '@/plugins/helpers'
 
 export const getters: GetterTree<ServerSensorHistoryState, RootState> = {
     getDatasetColor: (_, getters) => (name: string) => {
@@ -18,16 +19,40 @@ export const getters: GetterTree<ServerSensorHistoryState, RootState> = {
     },
 
     getSerieNames: (state) => (name: string) => {
-        const output: string[] = []
-        const seriesKeys = state.series
-            .map((serie: ServerSensorHistoryStateSerie) => serie.name)
-            .filter((serieName) => serieName.startsWith(`${name}`))
+        return [name]
+    },
 
-        seriesKeys.forEach((seriesKey) => {
-            output.push(seriesKey.slice(name.length + 1))
+    getSelectedLegends: (state, getters, rootState) => {
+
+        //container for updated selections
+        interface legends {
+            [key: string]: boolean
+        }
+        const selected: legends = {}
+
+        //new GUI values - {"":{"":X}}
+        const viewSettings = rootState.gui?.view?.sensorchart?.datasetSettings ?? {}
+
+        // transform selected{} into new GUI values
+        Object.keys(state.selectedLegends).forEach((key) => {
+
+            Object.keys(viewSettings[key]).forEach((attrKey) => {
+
+                const serieName = `${key}`
+
+                // break if serie in sensorchart doesn't exist
+                if (state.series.findIndex((serie) => serie.name === serieName) === -1) return
+
+                // add to selected
+                selected[serieName] = viewSettings[key][attrKey]
+            })
+         })
+        state.series.forEach((serie) => {
+            // break if object is already in the selected list
+            if (Object.keys(selected).includes(serie.name)) return
         })
 
-        return output
+        return selected
     },
 
     getSensorStoreSize: (state, getters, rootState, rootGetters) => {
