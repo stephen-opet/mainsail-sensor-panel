@@ -10,9 +10,9 @@
 
 ## Purpose
 
-Amongst <a src="https://github.com/nevermore3d/StealthMax">certain circles</a> in the 3D printing community, custom sensor measurments are increasingly becoming a core component of our 3D printing hardware. Moonraker has added support for importing custom sensor data, and the Mailsail Devs have begun to incorporate support for displaying this data. This project follows this same direction - we import custom data published to Moonraker, add it to the data store, and display it on the dashboard. It is in many ways a blatant rip-off of the temperature panel (why reinvent the wheel? temperature panel works very well)
+Amongst <a href="https://github.com/nevermore3d/StealthMax">certain circles</a> in the 3D printing community, custom sensor measurments are increasingly becoming a core component of our 3D printing hardware. Moonraker has added support for importing custom sensor data, and the Mailsail Devs have begun to incorporate support for displaying this data. This project follows this same direction - we import custom data published to Moonraker, add it to the data store, and display it on the dashboard. It is a blatant rip-off of the temperature panel (why reinvent the wheel? temperature panel works very well)
 
-On a personal level, this project is the core reason I migrated from RepRap to Klipper 1y+ ago. I live in a small, poorly-ventilated space and have always been weary of air quality issues related to FDM printing. Klipper's incorporation of the Raspberry Pi lends itself incredibly well towards adding custom sensors, such as the SPG40 I use to monitor my chamber's air quality. 
+This project is the core reason I migrated from RepRap to Klipper 1y+ ago. I live in a poorly-ventilated space and have always been weary of air quality issues related to FDM printing. Klipper's incorporation of the Raspberry Pi lends itself incredibly well towards adding custom sensors, such as the SPG40 I use to monitor my chamber's air quality. 
 
 ## Screenshots
 ![panel](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/f7afa67d-25de-47f5-8040-62b46a9890b1)
