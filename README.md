@@ -1,8 +1,7 @@
 <p align="center">
   <a>
-    <img src="https://ddamakertech.com/wp-content/uploads/2022/12/cropped-ddalogo.png" alt='Mainsail logo' height="152">
     <h1 align="center">Mainsail w/ Sensor Panel</h1>
-    <h2 align="center"><a src="https://ddamakertech.com">By DDA Maker Tech</a>
+    <h2 align="center"><a href="https://ddamakertech.com">By DDA Maker Tech</a>
   </a>
 </p>
 <p align="center">
