@@ -43,7 +43,7 @@ You have a few options to install this forked repo:
  - Download the file contents of this repo
  - Within the downloaded directory, build it with node:
   ```
-  npm install
+  npm ci
   npm run build
   ```
  - Within the working directory, locate dist/mainsail.zip
