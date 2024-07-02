@@ -62,12 +62,6 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
                         opacity: '0.1'
                     },
                 },
-                axisLabel: {
-                    interval: 'auto',
-                    color: '#ccc',
-                    margin: 10,
-                    formatter: this.timeFormat,
-                },
             },
             yAxis: this.yAxis,
             media: this.media,
@@ -137,11 +131,17 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
                         top: 35,
                         right: 15,
                         left: 60,
-                        bottom: 50,
+                        bottom: 25,
                     },
                     xAxis: {
                         minInterval: 60 * 1000,
                         splitNumber: 10,
+                        axisLabel: {
+                            interval: 'auto',
+                            color: '#ccc',
+                            margin: 10,
+                            formatter: this.timeFormat,
+                        },
                         splitLine: {
                             interval: function (index, value) {
                                 return value.getMinutes() % 1 === 0; // Adjust as needed
@@ -168,6 +168,13 @@ export default class SensorChart extends Mixins(BaseMixin, ThemeMixin) {
                             interval: function (index, value) {
                                 return value.getMinutes() % 4 === 0
                             },
+                        },
+                        axisLabel: {
+                            interval: 'auto',
+                            color: '#ccc',
+                            margin: 10,
+                            formatter: this.timeFormat,
+                            rotate: 90
                         },
                     },
                 }
