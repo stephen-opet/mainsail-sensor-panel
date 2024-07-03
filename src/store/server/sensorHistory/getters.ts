@@ -34,7 +34,7 @@ export const getters: GetterTree<ServerSensorHistoryState, RootState> = {
         const viewSettings = rootState.gui?.view?.sensorchart?.datasetSettings ?? {}
 
         // transform selected{} into new GUI values
-        Object.keys(state.selectedLegends).forEach((key) => {
+        Object.keys(viewSettings).forEach((key) => {
 
             Object.keys(viewSettings[key]).forEach((attrKey) => {
 
