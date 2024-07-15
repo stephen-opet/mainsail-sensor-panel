@@ -412,7 +412,7 @@ export default class HistoryListPanel extends Mixins(BaseMixin, HistoryMixin) {
 
         this.moonrakerHistoryFields.forEach((sensor) => {
             headers.push({
-                text: sensor.desc,
+                text: sensor.header,
                 value: sensor.name,
                 align: 'left',
                 configable: true,
