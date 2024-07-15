@@ -97,6 +97,8 @@ parameter_Humidity:
   units=%
 ```
 
+If you wish to save your sensor data alongside each job on the History & Statistics page, consider including a History Fields snippet in your moonraker.conf code for each data parameter - review the Moonraker configuration documentation for more information
+
 ## Step 2 - Install this forked Mainsail install
 
 You have a few options to install this forked repo:
