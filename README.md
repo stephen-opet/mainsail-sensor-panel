@@ -71,9 +71,9 @@ Where:
           {set_result("Temperature", data["temp"]|float)}
           {set_result("Humidity", data["hum"]|float)}
        ```
-   - For each piece of data within a topic for which you want to assign a unit, add one 'parameter_{pretty_name}' snippet
-     - If your {pretty_name} contains spaces, replace them with underscores
-     - {param_unit} is a string with your data's unit label
+ - For each piece of data within a topic for which you want to assign a unit, add one 'parameter_{pretty_name}' snippet
+   - If your {pretty_name} contains spaces, replace them with underscores
+   - {param_unit} is a string with your data's unit label
     
 Below is a sample snippet for moonraker.conf, reading the JSON payload from Step 0. There are three pieces of data, two of which have units:
 
