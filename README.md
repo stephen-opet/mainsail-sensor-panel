@@ -20,14 +20,84 @@ This project is the core reason I migrated from RepRap to Klipper 1y+ ago. I liv
 ![ChartSelection](https://github.com/stephen-opet/mainsail-sensor-panel/assets/47787706/33771302-a5ba-4945-873d-2af7d021c476)
 
 
-## Step 0 - Post your custom sensor data to MQTT, and import it into Moonraker
+## Step 0 - Post your custom sensor data to MQTT
 
 I will not cover this in great detail here - the specific steps users must follow to read their sensor and publish the data is unique to your specific setup. I will, however, provide these resources for you:
 - **[Sensett](https://github.com/stephen-opet/sensett):** KIAUH-esque CLI module I developed to automate sensor measurements & manage MQTT as a background service. This is my recommended first-stop if you need help getting started
-- **[Moonraker Docs](https://moonraker.readthedocs.io/en/latest/configuration/#sensor)):** Detailed documentation on configuring Moonraker to read MQTT data
 
+If possible, I recommend posting your data in a simple key:value JSON format for a given MQTT topic, i.e.:
+  ```
+  {"aqi": 29668.0, "temp": 43.68, "hum": 27.02}
+  ```
 
-## Step 1 - Install this forked Mainsail install
+## Step 1 - Import MQTT Data into Moonraker
+
+Once your data is available over your LAN via MQTT broker, reading it into moonraker is as simple as a few additions to your ~/printer_data/config/moonraker.conf file, in accordance with the [Moonraker Docs](https://moonraker.readthedocs.io/en/latest/configuration/#sensor):
+
+First, add a block to enable MQTT measurement:
+  ```
+  [mqtt] 
+  address: localhost
+  port: 1883
+  ```
+In this case, MQTT data is being broadcast from the same machine that is running mainsail on the default MQTT port, 1883. If your data is coming from a different machine, substitute "localhost" with the broker's IP
+
+Below this, for each unique MQTT topic you wish to read into moonraker as a sensor, include the following code section:
+  ```
+  [sensor {id}]
+  type: mqtt
+  name: {name}
+  state_topic: {topic}
+  state_response_template:
+    {% set data = payload|fromjson %}
+    {set_result("{pretty_name}", data["{key}"]|{data_type})}
+    ...
+  parameter_{param_name}:
+    units={param_unit}
+  ```
+Where:
+ - {id} is a one-word string naming the MQTT sensor (i.e. 'chamber', 'intake', 'livingroom', etc)
+ - {name} is a human-readable string to label the sensor - this will be used for display purposes
+ - {topic} is the MQTT topic your broker is posting the data to
+ - Under the 'state_response_template', the {set_result...} line should be repeated once for each piece of data posted to the MQTT topic:
+     - {pretty_name} is a human-readable label for the data
+     - {key} is the matching key labelling data in your MQTT payload
+     - {data_type} identified the data as either 'float' or 'int'
+     - For the example JSON payload depicted in Step 0, your state_response_template would be:
+       ```
+        state_response_template:
+          {% set data = payload|fromjson %}
+          {set_result("Air Quality", data["aqi"]|float)}
+          {set_result("Temperature", data["temp"]|float)}
+          {set_result("Humidity", data["hum"]|float)}
+       ```
+   - For each piece of data within a topic for which you want to assign a unit, add one 'parameter_{pretty_name}' snippet
+     - If your {pretty_name} contains spaces, replace them with underscores
+     - {param_unit} is a string with your data's unit label
+    
+Below is a sample snippet for moonraker.conf, reading the JSON payload from Step 0. There are three pieces of data, two of which have units:
+
+```
+[mqtt]
+address: localhost
+port: 1883
+
+[sensor chamber]
+type: mqtt
+name: Chamber
+state_topic: sensor/chamber
+state_response_template:
+  {% set data = payload|fromjson %}
+  {set_result("Air Quality", data["aqi"]|float)}
+  {set_result("Temperature", data["temp"]|float)}
+  {set_result("Humidity", data["hum"]|float)}
+parameter_Temperature:
+  units=°C
+parameter_Humidity:
+  units=%
+```
+
+## Step 2 - Install this forked Mainsail install
 
 You have a few options to install this forked repo:
 
@@ -52,7 +122,7 @@ You have a few options to install this forked repo:
  - Restart NGINX (sudo systemctl restart nginx) or otherwise just reboot your printer
  - Refresh your browser window
 
-## Step 2 - Stay Updated
+## Step 3 - Stay Updated
 
 If you plan to run this forked Mainsail on your machine long-term, updating mainsail unfortunately becomes a lot more difficult - KIAUH will not work, and Moonraker update manager will want you to reinstall vanilla Mainsail. You will have to decide if you are smart, or lazy
 
