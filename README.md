@@ -116,7 +116,6 @@ Modified Files:
  - Modified (new, unreleased) moonraker sensor functions to add sensor parameter_info & history_fields to data store
     - sensor/src/store/server/sensor/actions.ts
     - sensor/src/store/server/sensor/types.ts
- - /src/plugins/build-release_info.ts - repo details modified to support moonraker update center using this repo
  - Added sensorHistory to server object
     - /src/store/server/types.ts
     - /src/store/server/index.ts
@@ -127,7 +126,11 @@ Modified Files:
     - /src/store/gui/index.ts
     - /src/store/gui/mutations.ts
     - /src/store/gui/types.ts
-
+ - Refined history_field statistic panel rendering & data handling
+    - /src/components/panels/HistoryListPanel.vue
+    - /src/components/mixins/history.ts
+Modified to support moonraker update center using this repo - revert if/when forked
+    - /src/plugins/build-release_info.ts
 _______________________________________________________________
 
 <p align="center">
