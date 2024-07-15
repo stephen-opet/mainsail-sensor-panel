@@ -129,7 +129,7 @@ Modified Files:
  - Refined history_field statistic panel rendering & data handling
     - /src/components/panels/HistoryListPanel.vue
     - /src/components/mixins/history.ts
-Modified to support moonraker update center using this repo - revert if/when forked
+ - Modified to support moonraker update center using this repo - revert if/when forked
     - /src/plugins/build-release_info.ts
 _______________________________________________________________
 
