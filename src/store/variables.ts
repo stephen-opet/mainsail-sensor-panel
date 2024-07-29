@@ -182,6 +182,7 @@ export const themes: Theme[] = [
         colorLogo: '#FF0000',
         logo: { show: true, light: false },
         sidebarBackground: { show: true, light: false },
+        css: true,
     },
     {
         name: 'prusa',
