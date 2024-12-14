@@ -745,7 +745,6 @@
             "TooLessFilament": "Lehet, hogy a jelenlegi orsón nincs elég nyomtatószál ehhez a nyomtatáshoz. ({spoolWeight}g - {fileWeight}g)",
             "Weight": "Súly",
             "Yesterday": "Tegnap"
->>>>>>> upstream/develop
         },
         "StatusPanel": {
             "CancelPrint": "Nyomtatás megszakítása",
