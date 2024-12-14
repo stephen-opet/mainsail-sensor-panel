@@ -744,7 +744,6 @@
             "TooLessFilament": "Es posible que la bobina actual no tenga suficiente filamento para esta impresión. ({{spoolWeight}g de {fileWeight}g)",
             "Weight": "Peso",
             "Yesterday": "Ayer"
->>>>>>> upstream/develop
         },
         "StatusPanel": {
             "CancelPrint": "Cancelar impresión",
