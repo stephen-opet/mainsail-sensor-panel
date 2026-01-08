@@ -67,15 +67,11 @@
                 </v-list-item>
                 <v-list-item class="red--text" @click="deleteJob">
                     <v-icon class="mr-1" color="error">{{ mdiDelete }}</v-icon>
-                    {{ $t('History.Delete') }}
+                    {{ $t('Buttons.Delete') }}
                 </v-list-item>
             </v-list>
         </v-menu>
-        <add-batch-to-queue-dialog
-            :is-visible="addBatchToQueueDialogBool"
-            :show-toast="true"
-            :filename="job.filename"
-            @close="addBatchToQueueDialogBool = false" />
+        <add-batch-to-queue-dialog v-model="addBatchToQueueDialogBool" :show-toast="true" :filename="job.filename" />
     </v-row>
 </template>
 
@@ -88,6 +84,8 @@ import { defaultBigThumbnailBackground, thumbnailBigMin, thumbnailSmallMax, thum
 import { ServerHistoryStateJobWithCount } from '@/store/server/history/types'
 import { FileStateFileThumbnail } from '@/store/files/types'
 import { convertPrintStatusIcon, escapePath, formatPrintTime } from '@/plugins/helpers'
+import { CLOSE_CONTEXT_MENU, EventBus } from '@/plugins/eventBus'
+
 @Component
 export default class StatusPanelHistoryEntry extends Mixins(BaseMixin) {
     mdiCloseThick = mdiCloseThick
@@ -214,15 +212,16 @@ export default class StatusPanelHistoryEntry extends Mixins(BaseMixin) {
 
     openContextMenu(e: any) {
         e?.preventDefault()
+        EventBus.$emit(CLOSE_CONTEXT_MENU)
 
-        if (this.showContextMenu) {
-            this.showContextMenu = false
-            return
-        }
-
-        this.showContextMenu = true
         this.contextMenuX = e?.clientX || e?.pageX || window.screenX / 2
         this.contextMenuY = e?.clientY || e?.pageY || window.screenY / 2
+
+        this.showContextMenu = true
+    }
+
+    closeContextMenu() {
+        this.showContextMenu = false
     }
 
     startPrint() {
@@ -253,6 +252,14 @@ export default class StatusPanelHistoryEntry extends Mixins(BaseMixin) {
         return `${this.apiUrl}/server/files/gcodes/${escapePath(relative_url + thumbnail.relative_path)}?timestamp=${
             this.job.metadata.modified
         }`
+    }
+
+    mounted() {
+        EventBus.$on(CLOSE_CONTEXT_MENU, this.closeContextMenu)
+    }
+
+    beforeDestroy() {
+        EventBus.$off(CLOSE_CONTEXT_MENU, this.closeContextMenu)
     }
 }
 </script>

@@ -207,7 +207,6 @@
                     type="file"
                     @change="fileSelected" />
             </v-card-text>
-            <resize-observer @notify="handleResize" />
         </panel>
         <v-snackbar v-model="loading" :timeout="-1" fixed right bottom>
             <div>
@@ -246,30 +245,13 @@
                 </v-btn>
             </template>
         </v-snackbar>
-        <v-dialog v-model="excludeObject.bool" max-width="400">
-            <v-card>
-                <v-toolbar flat dense>
-                    <v-toolbar-title>
-                        <span class="subheading">
-                            <v-icon left>{{ mdiSelectionRemove }}</v-icon>
-                            {{ $t('Panels.StatusPanel.ExcludeObject.ExcludeObjectHeadline') }}
-                        </span>
-                    </v-toolbar-title>
-                </v-toolbar>
-                <v-card-text class="mt-3">
-                    {{ $t('Panels.StatusPanel.ExcludeObject.ExcludeObjectText', { name: excludeObject.name }) }}
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn text @click="excludeObject.bool = false">
-                        {{ $t('Panels.StatusPanel.ExcludeObject.Cancel') }}
-                    </v-btn>
-                    <v-btn color="primary" text @click="cancelObject">
-                        {{ $t('Panels.StatusPanel.ExcludeObject.ExcludeObject') }}
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+        <confirmation-dialog
+            v-model="excludeObject.bool"
+            :title="$t('Panels.StatusPanel.ExcludeObject.ExcludeObjectHeadline')"
+            :text="$t('Panels.StatusPanel.ExcludeObject.ExcludeObjectText', { name: excludeObject.name })"
+            :action-button-text="$t('Panels.StatusPanel.ExcludeObject.ExcludeObject')"
+            action-button-color="primary"
+            @action="cancelObject" />
     </div>
 </template>
 
@@ -295,6 +277,7 @@ import {
     mdiBroom,
     mdiSelectionRemove,
 } from '@mdi/js'
+import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue'
 import { Debounce } from 'vue-debounce-decorator'
 
 interface downloadSnackbar {
@@ -308,7 +291,7 @@ interface downloadSnackbar {
 
 let viewer: any = null
 @Component({
-    components: { Panel, CodeStream },
+    components: { ConfirmationDialog, Panel, CodeStream },
 })
 export default class Viewer extends Mixins(BaseMixin) {
     /**
@@ -362,6 +345,8 @@ export default class Viewer extends Mixins(BaseMixin) {
 
     fileData: string = ''
 
+    resizeObserver: ResizeObserver | null = null
+
     @Prop({ type: String, default: '', required: false }) declare filename: string
     @Ref('fileInput') declare fileInput: HTMLInputElement
     @Ref('viewerCanvasContainer') declare viewerCanvasContainer: HTMLElement
@@ -382,9 +367,10 @@ export default class Viewer extends Mixins(BaseMixin) {
         await this.init()
 
         if (this.loadedFile !== null) this.scrubFileSize = viewer.fileSize
-        if (viewer) {
-            this.fileData = viewer.fileData
-        }
+        if (viewer) this.fileData = viewer.fileData
+
+        this.resizeObserver = new ResizeObserver(() => this.handleResize())
+        this.resizeObserver.observe(this.viewerCanvasContainer)
     }
 
     beforeDestroy() {
@@ -399,6 +385,8 @@ export default class Viewer extends Mixins(BaseMixin) {
             clearInterval(this.scrubInterval)
             this.scrubInterval = undefined
         }
+
+        this.resizeObserver?.disconnect()
     }
 
     @Debounce(200)
@@ -1148,7 +1136,6 @@ export default class Viewer extends Mixins(BaseMixin) {
 
     cancelObject() {
         this.$socket.emit('printer.gcode.script', { script: 'EXCLUDE_OBJECT NAME=' + this.excludeObject.name })
-        this.excludeObject.bool = false
     }
 }
 </script>

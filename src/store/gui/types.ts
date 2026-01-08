@@ -132,6 +132,14 @@ export interface GuiState {
         hideOtherInstances: boolean
     }
     view: {
+        afc: {
+            hiddenExtruders: string[]
+            hiddenUnits: string[]
+            showFilamentName: boolean
+            showLaneInfinite: boolean
+            showUnitIcons: boolean
+            showTd1Color: boolean
+        }
         blockFileUpload: boolean
         configfiles: {
             countPerPage: number
@@ -216,6 +224,15 @@ export interface GuiState {
                 dashboard: string
                 page: string
             }
+        }
+        mmu: {
+            showClogDetection: boolean
+            showTtgMap: boolean
+            showDetails: boolean
+            largeFilamentStatus: boolean
+            showLogos: boolean
+            showName: boolean
+            showUnavailableSpoolColor: boolean
         }
     }
 }

@@ -13,18 +13,19 @@ import { escapePath } from '@/plugins/helpers'
 // eslint-disable-next-line
 export const getters: GetterTree<FileState, any> = {
     getDirectory: (state) => (requestedPath: string) => {
-        if (requestedPath.startsWith('/')) requestedPath = requestedPath.substr(1)
-        if (requestedPath.endsWith('/')) requestedPath = requestedPath.substr(0, requestedPath.length - 1)
+        if (requestedPath.startsWith('/')) requestedPath = requestedPath.substring(1)
+        if (requestedPath.endsWith('/')) requestedPath = requestedPath.substring(0, requestedPath.length - 1)
 
         const findDirectory = function (filetree: FileStateFile, pathArray: string[]): FileStateFile | null {
             if (pathArray.length) {
                 const newFiletree = filetree?.childrens?.find(
                     (element: FileStateFile) => element.isDirectory && element.filename === pathArray[0]
                 )
-                if (newFiletree) {
-                    pathArray.shift()
-                    return findDirectory(newFiletree, pathArray)
-                } else return null
+
+                if (!newFiletree) return null
+
+                pathArray.shift()
+                return findDirectory(newFiletree, pathArray)
             }
 
             return filetree
@@ -82,6 +83,13 @@ export const getters: GetterTree<FileState, any> = {
                 // END filter != gcode files or dirs
             })
 
+            const gcodes = Object.keys(rootState.printer.gcode.commands ?? {})
+            const preheat_gcode_objects = [
+                { name: 'first_layer_extr_temp', gcode: 'M104' },
+                { name: 'first_layer_bed_temp', gcode: 'M140' },
+                { name: 'chamber_temp', gcode: 'M141' },
+            ].filter((obj) => gcodes.includes(obj.gcode))
+
             // build gcode files array with all data in one array
             const output: FileStateGcodefile[] = []
             files.forEach((file: FileStateFile) => {
@@ -100,11 +108,6 @@ export const getters: GetterTree<FileState, any> = {
                 }
 
                 const preheat_gcode_array: string[] = []
-                const preheat_gcode_objects = [
-                    { name: 'first_layer_extr_temp', gcode: 'M104' },
-                    { name: 'first_layer_bed_temp', gcode: 'M140' },
-                ]
-
                 preheat_gcode_objects.forEach((object) => {
                     if (object.name in file && file[object.name] > 1) {
                         preheat_gcode_array.push(`${object.gcode} S${file[object.name]}`)

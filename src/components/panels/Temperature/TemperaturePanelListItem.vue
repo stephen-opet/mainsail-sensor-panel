@@ -49,14 +49,13 @@
                 :attribute-name="commandAttributeName" />
         </td>
         <temperature-panel-list-item-edit
-            :bool-show="showEditDialog"
+            v-model="showEditDialog"
             :object-name="objectName"
             :name="name"
             :format-name="formatName"
             :additional-sensor-name="additionalSensorName"
             :icon="icon"
-            :color="color"
-            @close-dialog="showEditDialog = false" />
+            :color="color" />
         <v-menu v-model="showContextMenu" :position-x="contextMenuX" :position-y="contextMenuY" absolute offset-y>
             <v-list>
                 <v-list-item v-if="isHeater" :disabled="!isHeaterActive" @click="turnOffHeater">
@@ -90,7 +89,7 @@ import {
     mdiThermometer,
 } from '@mdi/js'
 import { additionalSensors, opacityHeaterActive, opacityHeaterInactive } from '@/store/variables'
-import { CLOSE_TEMPERATURE_CONTEXT_MENU, EventBus } from '@/plugins/eventBus'
+import { CLOSE_CONTEXT_MENU, EventBus } from '@/plugins/eventBus'
 
 @Component
 export default class TemperaturePanelListItem extends Mixins(BaseMixin) {
@@ -305,15 +304,15 @@ export default class TemperaturePanelListItem extends Mixins(BaseMixin) {
     }
 
     mounted() {
-        EventBus.$on(CLOSE_TEMPERATURE_CONTEXT_MENU, this.closeContextMenu)
+        EventBus.$on(CLOSE_CONTEXT_MENU, this.closeContextMenu)
     }
 
     beforeDestroy() {
-        EventBus.$off(CLOSE_TEMPERATURE_CONTEXT_MENU, this.closeContextMenu)
+        EventBus.$off(CLOSE_CONTEXT_MENU, this.closeContextMenu)
     }
 
     openContextMenu(event: MouseEvent) {
-        EventBus.$emit(CLOSE_TEMPERATURE_CONTEXT_MENU)
+        EventBus.$emit(CLOSE_CONTEXT_MENU)
 
         this.showContextMenu = true
         this.contextMenuX = event?.clientX || event?.pageX || window.screenX / 2

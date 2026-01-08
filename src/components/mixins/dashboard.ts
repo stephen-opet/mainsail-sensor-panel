@@ -10,11 +10,15 @@ import {
     mdiEngine,
     mdiGamepad,
     mdiInformation,
+    mdiLedStrip,
     mdiPrinter3dNozzle,
     mdiThermometerLines,
     mdiWebcam,
     mdiSatelliteVariant,
+    mdiAdjust,
+    mdiMulticast,
 } from '@mdi/js'
+import { afcIconLogo } from '@/plugins/afcIcons'
 
 @Component
 export default class DashboardMixin extends BaseMixin {
@@ -60,6 +64,8 @@ export default class DashboardMixin extends BaseMixin {
                 return mdiCodeTags
             case 'miscellaneous':
                 return mdiDipSwitch
+            case 'led-effects':
+                return mdiLedStrip
             case 'temperature':
                 return mdiThermometerLines
             case 'miniconsole':
@@ -70,6 +76,12 @@ export default class DashboardMixin extends BaseMixin {
                 return mdiPrinter3dNozzle
             case 'sensor':
                 return mdiSatelliteVariant
+            case 'spoolman':
+                return mdiAdjust
+            case 'mmu':
+                return mdiMulticast
+            case 'afc':
+                return afcIconLogo
             default:
                 return mdiInformation
         }

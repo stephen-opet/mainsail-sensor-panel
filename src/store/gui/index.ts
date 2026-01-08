@@ -194,6 +194,14 @@ export const getDefaultState = (): GuiState => {
             hideOtherInstances: false,
         },
         view: {
+            afc: {
+                hiddenExtruders: [],
+                hiddenUnits: [],
+                showFilamentName: false,
+                showLaneInfinite: true,
+                showUnitIcons: true,
+                showTd1Color: true,
+            },
             blockFileUpload: false,
             configfiles: {
                 countPerPage: 10,
@@ -274,6 +282,15 @@ export const getDefaultState = (): GuiState => {
             sensorchart: {
                 datasetSettings: {},
                 boolSensorchart: true,
+	    },
+            mmu: {
+                showClogDetection: true,
+                showTtgMap: true,
+                showDetails: true,
+                largeFilamentStatus: false,
+                showLogos: true,
+                showName: true,
+                showUnavailableSpoolColor: false,
             },
             tempchart: {
                 boolTempchart: true,

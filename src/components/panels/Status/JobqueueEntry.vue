@@ -39,10 +39,7 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-        <jobqueue-entry-change-count-dialog
-            :show="showChangeCountDialog"
-            :job="job"
-            @close="showChangeCountDialog = false" />
+        <jobqueue-entry-change-count-dialog v-model="showChangeCountDialog" :job="job" />
     </v-row>
 </template>
 
@@ -54,6 +51,7 @@ import { ServerJobQueueStateJob } from '@/store/server/jobQueue/types'
 import { mdiCloseThick, mdiCounter, mdiDragVertical, mdiFile, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 import { defaultBigThumbnailBackground } from '@/store/variables'
 import GcodefilesThumbnail from '@/components/panels/Gcodefiles/GcodefilesThumbnail.vue'
+import { CLOSE_CONTEXT_MENU, EventBus } from '@/plugins/eventBus'
 
 @Component({
     components: { GcodefilesThumbnail },
@@ -161,15 +159,16 @@ export default class StatusPanelJobqueueEntry extends Mixins(BaseMixin) {
 
     openContextMenu(e: any) {
         e?.preventDefault()
+        EventBus.$emit(CLOSE_CONTEXT_MENU)
 
-        if (this.showContextMenu) {
-            this.showContextMenu = false
-            return
-        }
-
-        this.showContextMenu = true
         this.contextMenuX = e?.clientX || e?.pageX || window.screenX / 2
         this.contextMenuY = e?.clientY || e?.pageY || window.screenY / 2
+
+        this.showContextMenu = true
+    }
+
+    closeContextMenu() {
+        this.showContextMenu = false
     }
 
     printJob() {
@@ -184,6 +183,14 @@ export default class StatusPanelJobqueueEntry extends Mixins(BaseMixin) {
         const ids = [...(this.job.combinedIds ?? []), this.job.job_id]
 
         this.$store.dispatch('server/jobQueue/deleteFromQueue', ids)
+    }
+
+    mounted() {
+        EventBus.$on(CLOSE_CONTEXT_MENU, this.closeContextMenu)
+    }
+
+    beforeDestroy() {
+        EventBus.$off(CLOSE_CONTEXT_MENU, this.closeContextMenu)
     }
 }
 </script>

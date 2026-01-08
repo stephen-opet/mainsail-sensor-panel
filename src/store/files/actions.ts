@@ -183,14 +183,14 @@ export const actions: ActionTree<FileState, RootState> = {
     },
 
     getMetadata({ commit, rootState }, payload) {
-        if (payload !== undefined && payload.filename !== '') {
-            if (payload.filename === rootState?.printer?.print_stats?.filename) {
-                commit('printer/clearCurrentFile', null, { root: true })
-                commit('printer/setData', { current_file: payload }, { root: true })
-            }
+        if (payload === null || payload === undefined || payload.filename === '') return
 
-            commit('setMetadata', payload)
+        if (payload.filename === rootState?.printer?.print_stats?.filename) {
+            commit('printer/clearCurrentFile', null, { root: true })
+            commit('printer/setData', { current_file: payload }, { root: true })
         }
+
+        commit('setMetadata', payload)
     },
 
     getMetadataCurrentFile({ commit }, payload) {
@@ -235,6 +235,13 @@ export const actions: ActionTree<FileState, RootState> = {
 
             case 'create_dir':
                 commit('setCreateDir', payload)
+
+                // Request directory details to update disk usage
+                Vue.$socket.emit(
+                    'server.files.get_directory',
+                    { path: `${payload.item.root}/${payload.item.path}` },
+                    { action: 'files/getDirectory' }
+                )
                 break
 
             case 'move_dir':
