@@ -143,7 +143,7 @@ Lazy users will blindly trust me, an internet stranger, to maintain their softwa
   [update_manager mainsail]
   type: web
   channel: stable
-  repo: stephen-opet/mainsail-sensor-panel
+  repo: ignorant-youth/mainsail-sensor-panel
   path: ~/mainsail
   ```
  - The Update Manager will now manage updates for Mainsail if/when I release updates alongside mainsail-crew
